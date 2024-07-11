@@ -116,6 +116,8 @@ export const addMessagesToChatResponse = async (chat: ChatTypeInResponse) => {
         updatedOn: message.updatedOn,
         chat_id: message.chat_id,
         isRead: message.isRead,
+        isRemoved: message.isRemoved,
+        wasEdited: message.wasEdited,
         user: chat.users[0].id === message.user_id
             ? chat.users[0]
             : chat.users[1]

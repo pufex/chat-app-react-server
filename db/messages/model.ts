@@ -4,10 +4,12 @@ import mongoose from "mongoose"
 export type MessageType = {
     chat_id: string,
     user_id: string,
-    content: string,
+    content: string | null,
     createdOn: Date,
     updatedOn: Date,
     isRead: boolean,
+    isRemoved: boolean,
+    wasEdited: boolean,
 }
 
 export type MessageTypeInResponse = Omit<MessageType, "user_id"> & {id: string, user: UserTypeInResponse}
@@ -26,7 +28,11 @@ const MessageSchema = new mongoose.Schema<MessageType>(
         },
         content: {
             type: String,
-            required: true,
+            required: function() {
+                return this.content === undefined 
+                                    || 
+                (this.content !== null && typeof this.content !== "string") 
+            }
         },
         createdOn: {
             type: Date,
@@ -39,7 +45,15 @@ const MessageSchema = new mongoose.Schema<MessageType>(
         isRead: {
             type: Boolean,
             default: false,
-        }
+        },
+        isRemoved: {
+            type: Boolean,
+            default: false
+        },
+        wasEdited: {
+            type: Boolean,
+            default: false
+        },
     },
     { timestamps: true }
 )

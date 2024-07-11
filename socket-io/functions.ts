@@ -1,5 +1,4 @@
 import type { EventController } from "./types";
-import { ErrorPayload } from "./types/payloads";
 import type { UserTypeInResponse } from "../db/auth/model";
 import type { ChatTypeInResponseWithMessages } from "../db/chats/model";
 import type { MessageTypeInResponse } from "../db/messages/model";
@@ -83,6 +82,8 @@ export const beginUserSession: EventController = async (_, socket) => {
                 createdOn: message.createdOn,
                 updatedOn: message.updatedOn,
                 isRead: message.isRead,
+                isRemoved: message.isRemoved,
+                wasEdited: message.wasEdited,
                 user: message.user_id === friend_id
                     ? better_friend
                     : better_user

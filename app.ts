@@ -21,6 +21,9 @@ import { beginUserSession } from "./socket-io/functions";
 
 import { 
     handleMessageAsk,
+    handleMessagesRead,
+    handleMessageRemoving,
+    handleMessageEdit
 } from "./socket-io/controllers/chat";
 
 import {
@@ -61,6 +64,9 @@ mongoose.connect(URI)
             beginUserSession(io, socket)
 
             socket.on("askToMessage", handleMessageAsk(io, socket))
+            socket.on("askToEditMessage", handleMessageEdit(io, socket))
+            socket.on("askToRemoveMessage", handleMessageRemoving(io, socket))
+            socket.on("askToReadMessages", handleMessagesRead(io, socket))
             socket.on("disconnect", handleDisconnect(io ,socket))
         })
     })

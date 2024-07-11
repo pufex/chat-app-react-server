@@ -18,3 +18,18 @@ export type AskToMessagePayload = {
 export type AskAboutNotificationPayload = {
     notification_id: string,
 }
+
+export type AskToReadMessagesPayload = {
+    chat_id: string,
+    friend_id: string,
+}
+
+export type AskToEditMessagePayload = {
+    message_id: string,
+    new_content: string
+}
+
+export type AskToRemoveMessagePayload = {
+    message_id: string,
+}
+
