@@ -67,7 +67,7 @@ export const handleMessageAsk: EventController = (io, socket) => {
                         user, chat_id
                     }
 
-                    chat.lastMessage = content
+                    chat.last_message_id = newMessage.id
                     await chat.save()
 
                     await session.commitTransaction()

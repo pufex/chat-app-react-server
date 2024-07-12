@@ -99,6 +99,7 @@ export const createChat: ExpressController = async (req, res) => {
                 }
                 const betterChat: ChatTypeInResponseWithMessages = {
                     ...chatWithUsers,
+                    last_message: null,
                     messages: []
                 }
 

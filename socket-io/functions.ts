@@ -1,6 +1,6 @@
 import type { EventController } from "./types";
 import type { UserTypeInResponse } from "../db/auth/model";
-import type { ChatTypeInResponseWithMessages } from "../db/chats/model";
+import type { ChatTypeInResponseWithMessages, LastMessageType } from "../db/chats/model";
 import type { MessageTypeInResponse } from "../db/messages/model";
 import User from "../db/auth/model";
 import Chat from "../db/chats/model";
@@ -89,11 +89,19 @@ export const beginUserSession: EventController = async (_, socket) => {
                     : better_user
             }))
 
+            const recentMessage = messages.find(message => message._id.toString() === chat.last_message_id)
+            const last_message: LastMessageType = !recentMessage
+                ? null
+                : {
+                    message_id: recentMessage._id.toString(),
+                    content: recentMessage.content
+                }
+
             return {
                 id: chat._id.toString(),
-                lastMessage: chat.lastMessage,
                 users: [better_user, better_friend],
-                messages: betterMessages
+                messages: betterMessages,
+                last_message
             }
         }))
         socket.join(user_id);

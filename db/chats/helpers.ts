@@ -1,6 +1,6 @@
 import type { FilterQuery } from "mongoose"
 import { UserTypeInResponse } from "../auth/model"
-import type { ChatTypeInResponse, ChatTypeInResponseWithMessages } from "./model"
+import type { ChatTypeInResponse, ChatTypeInResponseWithMessages, LastMessageType } from "./model"
 import type { MessageTypeInResponse } from "../messages/model"
 import Chat from "./model"
 import User from "../auth/model"
@@ -50,7 +50,7 @@ export const getChatsWithUsers = async (user_id: string) => {
         return {
             id: chat._id.toString(), 
             users: [betterUser],
-            lastMessage: chat.lastMessage,
+            last_message_id: chat.last_message_id
         }
         const betterFriend: UserTypeInResponse = {
             id: friend.id,
@@ -62,7 +62,7 @@ export const getChatsWithUsers = async (user_id: string) => {
         return {
             id: chat._id.toString(),
             users: [betterUser, betterFriend],
-            lastMessage: chat.lastMessage,
+            last_message_id: chat.last_message_id
         }
     })
     return chatInResponse
@@ -93,9 +93,9 @@ export const getChatWithUsers = async (user_id: string) => {
             gender: user.gender,
         }))
     const chatWithUsers: ChatTypeInResponse = {
-        id: chat._id.toString(),
-        lastMessage: chat.lastMessage,
-        users: betterUsers
+        id: chat._id.toString(),         
+        users: betterUsers,
+        last_message_id: chat.last_message_id
     }
     return chatWithUsers
 }
@@ -107,7 +107,7 @@ export const addMessagesToChatResponse = async (chat: ChatTypeInResponse) => {
         .exec()
     
     if(!messages.length)
-        return {...chat, messages: []}
+        return {...chat, messages: [], last_message: null}
 
     const betterMessages: MessageTypeInResponse[] = messages.map(message => ({
         id: message.id,
@@ -123,6 +123,18 @@ export const addMessagesToChatResponse = async (chat: ChatTypeInResponse) => {
             : chat.users[1]
     }))
 
-    const betterChat: ChatTypeInResponseWithMessages = {...chat, messages: betterMessages}
+    const recentMessage = messages.find(message => message._id.toString() === chat.last_message_id)
+    const last_message: LastMessageType = !recentMessage
+        ? null
+        : {
+            message_id: recentMessage.id,
+            content: recentMessage.content
+        }
+
+    const betterChat: ChatTypeInResponseWithMessages = {
+        ...chat, 
+        messages: betterMessages,
+        last_message
+    }
     return betterChat
 }

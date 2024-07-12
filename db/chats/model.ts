@@ -4,11 +4,13 @@ import mongoose from "mongoose";
 
 export type ChatType = {
     users_ids: string[],
-    lastMessage: string,
+    last_message_id: string | null
 }
 
+export type LastMessageType = {message_id: string, content: string | null} | null
+
 export type ChatTypeInResponse = Omit<ChatType, "users_ids"> & {id: string, users: UserTypeInResponse[] }
-export type ChatTypeInResponseWithMessages = ChatTypeInResponse & {messages: MessageTypeInResponse[]}
+export type ChatTypeInResponseWithMessages = Omit<ChatTypeInResponse, "last_message_id"> & {messages: MessageTypeInResponse[], last_message: LastMessageType}
 export type CreateChatPayload = {email: string}
 
 const ChatSchema = new mongoose.Schema<ChatType>({
@@ -16,7 +18,7 @@ const ChatSchema = new mongoose.Schema<ChatType>({
         type: [String],
         required: true,
     },
-    lastMessage: {
+    last_message_id: {
         type: String,
         default: null,
     }
